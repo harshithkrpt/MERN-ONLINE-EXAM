@@ -17,7 +17,7 @@ function Navbar() {
         <Link to="/online_exam_login">Online Exam Login</Link>
       </li>
       <li>
-        <Link to="/staff_login">Staff Login</Link>
+        <Link to="/admin-login">Admin Login</Link>
       </li>
     </ul>
   );
