@@ -24,37 +24,41 @@ router.get("/test", (req, res) => {
 
 // @route POST api/admin/register
 // @desc Register Admin
-// @access Private and removed once created a admin
-router.post("/register", (req, res) => {
-  const { errors, isValid } = validateRegisterInput(req.body);
-  if (!isValid) {
-    return res.status(400).json(errors);
-  }
-
-  Admin.findOne({ email: req.body.email }).then(admin => {
-    if (admin) {
-      errors.email = "Email Field Already Exists";
+// @access Private and Only LoggedIn Admin can create
+router.post(
+  "/register",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validateRegisterInput(req.body);
+    if (!isValid) {
       return res.status(400).json(errors);
-    } else {
-      const newAdmin = new Admin({
-        name: req.body.name,
-        email: req.body.email,
-        password: req.body.password
-      });
-      // hash password
-      bcrypt.genSalt(10, (err, salt) => {
-        bcrypt.hash(newAdmin.password, salt, (err, hash) => {
-          if (err) console.log(err);
-          newAdmin.password = hash;
-          newAdmin
-            .save()
-            .then(admin => res.json(admin))
-            .catch(err => console.log(err));
-        });
-      });
     }
-  });
-});
+
+    Admin.findOne({ email: req.body.email }).then(admin => {
+      if (admin) {
+        errors.email = "Email Field Already Exists";
+        return res.status(400).json(errors);
+      } else {
+        const newAdmin = new Admin({
+          name: req.body.name,
+          email: req.body.email,
+          password: req.body.password
+        });
+        // hash password
+        bcrypt.genSalt(10, (err, salt) => {
+          bcrypt.hash(newAdmin.password, salt, (err, hash) => {
+            if (err) console.log(err);
+            newAdmin.password = hash;
+            newAdmin
+              .save()
+              .then(admin => res.json(admin))
+              .catch(err => console.log(err));
+          });
+        });
+      }
+    });
+  }
+);
 
 // @route POST api/admin/login
 // @desc Login Admin by generating a token

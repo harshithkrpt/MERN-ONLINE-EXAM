@@ -1,4 +1,5 @@
 import { SET_CURRENT_ADMIN } from "../actions/types";
+import isEmpty from "./validations/is-empty";
 
 const initialState = {
   isAuthenticated: false,
@@ -10,7 +11,7 @@ export default function(state = initialState, action) {
     case SET_CURRENT_ADMIN:
       return {
         ...state,
-        isAuthenticated: true,
+        isAuthenticated: !isEmpty(action.payload),
         admin: action.payload
       };
     default:

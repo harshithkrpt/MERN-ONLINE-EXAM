@@ -7,10 +7,8 @@ export default function(state = initialState, action) {
     case CLEAR_ERRORS:
       return {};
     case GET_ERRORS:
-      return {
-        ...state,
-        errors: action.payload
-      };
+      return action.payload;
+
     default:
       return state;
   }

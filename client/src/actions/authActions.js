@@ -27,9 +27,33 @@ export const loginadmin = adminData => dispatch => {
     );
 };
 
+// Register Admin TODO TAKE TO ANOTHER ROUTE FOR ADMINS INFO
+export const registeradmin = (adminRegisterData, history) => dispatch => {
+  axios
+    .post("/api/admin/register", adminRegisterData)
+    .then(res => history.push("/dashboard"))
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+// Set LoggedIn User
 export const setCurrentAdmin = decoded => {
   return {
     type: SET_CURRENT_ADMIN,
     payload: decoded
   };
+};
+
+//Logout action
+export const logoutadmin = () => dispatch => {
+  //Remove Token
+  localStorage.removeItem("jwtToken");
+  // Remove auth header for future requests
+  setAuthToken(false);
+  // Set current user as false
+  dispatch(setCurrentAdmin({}));
 };
