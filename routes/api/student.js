@@ -3,6 +3,12 @@
 // router for student api
 const express = require("express"); // express import
 const passport = require("passport");
+// secret key
+const key = require("../../config/keys").studentsecretKey;
+// bcrypt
+const bcrypt = require("bcryptjs");
+// jwt
+const jwt = require("jsonwebtoken");
 
 const Student = require("../../models/Student");
 const StudentMarks = require("../../models/StudentMarks");
@@ -10,6 +16,10 @@ const StudentMarks = require("../../models/StudentMarks");
 const router = express.Router();
 
 const validateStudentInput = require("../../validations/student");
+const validateStudentLoginInput = require("../../validations/student-login");
+
+// Verify JWT TOKEN MIDDLEWARE
+const verifyToken = require("../../middleware/studentlogin");
 
 // @route POST api/student/
 // @desc Adding Student and also Updating
@@ -78,19 +88,73 @@ router.post(
           }).then(student => {
             if (student) {
               errors.hallticketnumber =
-                "This hall Ticket Number Already Exists";
+                "This Hall Ticket Number Already Exists";
             }
 
-            // Save
-            new Student(studentData)
-              .save()
-              .then(student => res.json(student))
-              .catch(err => console.log(err));
+            // hashpassword
+            studentData.password = studentData.hallticketnumber;
+            bcrypt.genSalt(10, (err, salt) => {
+              bcrypt.hash(studentData.password, salt, (err, hash) => {
+                if (err) throw err;
+                studentData.password = hash;
+                new Student(studentData)
+                  .save()
+                  .then(student => res.json(student))
+                  .catch(err => console.log(err));
+              });
+            });
           });
         }
       }
     );
   }
 );
+
+// @route POST api/student/login
+// @desc Logining In Student
+// @access Public For Students to view the marks
+router.post("/login", (req, res) => {
+  const { errors, isValid } = validateStudentLoginInput(req.body);
+  if (!isValid) return res.status(400).json(errors);
+
+  const hallticketnumber = req.body.userId;
+  const password = req.body.password;
+  Student.findOne({ hallticketnumber: hallticketnumber }).then(student => {
+    if (!student) {
+      errors.userId = "Student Not Found";
+      return res.status(404).json(errors);
+    }
+
+    // Check Password
+    bcrypt.compare(password, student.password).then(isMatch => {
+      if (isMatch) {
+        const payload = {
+          userId: student.hallticketnumber,
+          name: student.name
+        };
+        // Create JWT
+        // Sign Token - User
+        jwt.sign(payload, key, { expiresIn: 3600 }, (err, token) => {
+          res.json({ success: true, token: "StudentBearer " + token });
+        });
+      } else {
+        errors.password = "Password Incorrect";
+        return res.status(400).json(errors);
+      }
+    });
+  });
+});
+
+// @route POST api/student/protected
+// @desc Student Protected Routes
+// @access Private for LoggedInStudents
+router.get("/protected", verifyToken, (req, res) => {
+  return res.json({
+    success: true,
+    protected: true,
+    userId: req.student.userId,
+    name: req.student.name
+  });
+});
 
 module.exports = router;

@@ -71,7 +71,7 @@ router.post("/login", (req, res) => {
 
   Admin.findOne({ email }).then(admin => {
     if (!admin) {
-      errors.email = "User Not Found";
+      errors.email = "Admin Not Found";
       return res.status(404).json(errors);
     }
 

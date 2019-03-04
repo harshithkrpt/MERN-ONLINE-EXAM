@@ -23,6 +23,7 @@ import RegisterStudent from "./components/student/inputs/RegisterStudent";
 import RegisterSubjects from "./components/subjects/RegisterSubjects";
 import AddResults from "./components/student/inputs/AddResults";
 import AddStudentMarks from "./components/student/inputs/AddStudentMarks";
+import Dashboard from "./components/admin/Dashboard";
 
 // Alerts
 import { Provider as AlertProvider } from "react-alert";
@@ -104,6 +105,9 @@ class App extends Component {
                     path="/add-student-marks"
                     component={AddStudentMarks}
                   />
+                </Switch>
+                <Switch>
+                  <PrivateRoute exact path="/dashboard" component={Dashboard} />
                 </Switch>
               </div>
             </React.Fragment>

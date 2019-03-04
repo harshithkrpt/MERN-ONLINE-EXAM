@@ -8,6 +8,10 @@ const StudentSchema = new Schema({
     type: String,
     required: true
   },
+  password: {
+    type: String,
+    required: true
+  },
   admindate: {
     // joining date
     type: Date,
