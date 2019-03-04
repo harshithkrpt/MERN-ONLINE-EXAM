@@ -82,20 +82,21 @@ router.post(
           });
       } else {
         // Subject Create and Save
+        Student.findOne({ hallticketnumber: req.body.rollnumber }).then(
+          student => {
+            if (!student) {
+              errors.studentprofileerror =
+                "Student Profile is not created / Invalid RollNumber ... ";
 
-        Student.findOne({ rollnumber: req.body.rollnumber }).then(student => {
-          if (!student) {
-            errors.studentprofileerror =
-              "Student Profile is not created / Invalid RollNumber ... ";
-
-            res.status(400).json(errors);
-          } else {
-            new Result(resultData)
-              .save()
-              .then(result => res.json(result))
-              .catch(err => console.log(err));
+              return res.status(400).json(errors);
+            } else {
+              new Result(resultData)
+                .save()
+                .then(result => res.json(result))
+                .catch(err => console.log(err));
+            }
           }
-        });
+        );
       }
     });
   }

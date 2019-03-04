@@ -33,8 +33,6 @@ class RegisterSubject extends Component {
       subjectData.branch = this.state.branch;
       subjectData.semwisesubjects = [...this.state.semwisesubjects];
       this.props.registersubject(subjectData, this.props.history);
-    } else {
-      // TODO DISPLAY ERRORS AND TO CLEAR ERRORS AFTER 2 SEC
     }
   };
 

@@ -16,6 +16,8 @@ class Alert extends Component {
       if (errors.subjectname) alert.error(errors.subjectname);
       if (errors.code) alert.error(errors.code);
       if (errors.allotedcredits) alert.error(errors.allotedcredits);
+      if (errors.common) alert.error(errors.common);
+      if (errors.studentprofileerror) alert.error(errors.studentprofileerror);
     }
   }
   render() {

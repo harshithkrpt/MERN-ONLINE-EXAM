@@ -34,7 +34,6 @@ module.exports = function ValidateResultInput(data) {
         ? subject.allotedcredits
         : "";
 
-      // TODO GET ERRORS FOR EACH MISSING ENTITY IN FUTURE
       if (Validator.isEmpty(subject.obtainedcredits))
         errors.subjectname = "One/More Obtainer Credits Field's are Missing";
       if (Validator.isEmpty(subject.code))

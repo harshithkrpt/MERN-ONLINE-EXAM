@@ -17,11 +17,6 @@ const router = express.Router();
 // import Model Admin
 const Admin = require("../../models/Admin");
 
-// test
-router.get("/test", (req, res) => {
-  res.json({ name: "admin" });
-});
-
 // @route POST api/admin/register
 // @desc Register Admin
 // @access Private and Only LoggedIn Admin can create

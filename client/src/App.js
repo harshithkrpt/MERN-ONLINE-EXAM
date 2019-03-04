@@ -21,6 +21,8 @@ import AdminLogin from "./components/auth/AdminLogin";
 import AdminRegister from "./components/auth/AdminRegister";
 import RegisterStudent from "./components/student/inputs/RegisterStudent";
 import RegisterSubjects from "./components/subjects/RegisterSubjects";
+import AddResults from "./components/student/inputs/AddResults";
+import AddStudentMarks from "./components/student/inputs/AddStudentMarks";
 
 // Alerts
 import { Provider as AlertProvider } from "react-alert";
@@ -87,6 +89,20 @@ class App extends Component {
                     exact
                     path="/register-subject"
                     component={RegisterSubjects}
+                  />
+                </Switch>
+                <Switch>
+                  <PrivateRoute
+                    exact
+                    path="/add-results"
+                    component={AddResults}
+                  />
+                </Switch>
+                <Switch>
+                  <PrivateRoute
+                    exact
+                    path="/add-student-marks"
+                    component={AddStudentMarks}
                   />
                 </Switch>
               </div>
