@@ -142,13 +142,6 @@ class App extends Component {
                     component={CreateOnlinePaper}
                   />
                 </Switch>
-                <Switch>
-                  <StudentPrivateRoute
-                    exact
-                    path="/student/dashboard"
-                    component={CreateOnlinePaper}
-                  />
-                </Switch>
               </div>
             </React.Fragment>
           </Router>

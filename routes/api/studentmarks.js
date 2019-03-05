@@ -6,6 +6,9 @@ const StudentMarks = require("../../models/StudentMarks");
 const Subject = require("../../models/Subject");
 const Result = require("../../models/Result");
 
+//verify token
+const verifyToken = require("../../middleware/studentlogin");
+
 const validateStudentMarksInput = require("../../validations/studentmarks");
 
 // @route POST api/studentmarks
@@ -110,5 +113,24 @@ route.post(
       );
   }
 );
+
+// @route GET api/studentmarks/
+// @desc GET STUDENT OVERALL MARKS
+// @access Private for LoggedInStudents
+route.get("/", verifyToken, (req, res) => {
+  StudentMarks.findOne({ rollnumber: req.student.userId })
+    .populate("branchsubjects")
+    .populate("semresults")
+    .then(studentmarks => {
+      if (!studentmarks)
+        return res.status(404).json({
+          notfound:
+            req.student.userId +
+            "marks are are not found | cannot be displayed now"
+        });
+      return res.json(studentmarks);
+    })
+    .catch(err => console.log(err));
+});
 
 module.exports = route;

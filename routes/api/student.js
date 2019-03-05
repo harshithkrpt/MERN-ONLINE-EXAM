@@ -12,12 +12,13 @@ const jwt = require("jsonwebtoken");
 
 const Student = require("../../models/Student");
 const StudentMarks = require("../../models/StudentMarks");
+const ReportError = require("../../models/ReportError");
 
 const router = express.Router();
 
 const validateStudentInput = require("../../validations/student");
 const validateStudentLoginInput = require("../../validations/student-login");
-
+const validateReportErrorInput = require("../../validations/report-error");
 // Verify JWT TOKEN MIDDLEWARE
 const verifyToken = require("../../middleware/studentlogin");
 
@@ -146,6 +147,65 @@ router.post("/login", (req, res) => {
       })
       .catch(err => console.log(err));
   });
+});
+
+// @route GET api/student/profile
+// @desc Get the Student Profile
+// @access Private for LoggedInStudents
+router.get("/profile", verifyToken, (req, res) => {
+  Student.findOne({ hallticketnumber: req.student.userId })
+    .then(student => {
+      let errors = {};
+
+      if (!student) {
+        errors.student = "Cannot get Student Profile";
+        return res.status(401).json(errors);
+      }
+      // Response Data
+      const resData = {};
+      resData.hallticketnumber = student.hallticketnumber;
+      resData.batch = student.batch;
+      resData.age = student.age;
+      resData.caste = student.caste;
+      resData.category = student.category;
+      resData.name = student.name;
+      resData.fathername = student.fathername;
+      resData.mothername = student.mothername;
+      resData.studentemail = student.studentemail;
+      resData.studentmobilenumber = student.studentmobilenumber;
+      resData.parentmobilenumber = student.parentmobilenumber;
+      resData.admindate = student.admindate;
+      resData.dob = student.dob;
+      resData.address = { ...student.address };
+      resData.id = student._id;
+      return res.json(resData);
+    })
+    .catch(err => console.log(err));
+});
+
+// @route POST api/student/profile/report
+// @desc Report For Profile Errors
+// @access Private for LoggedInStudents
+router.post("/profile/report", verifyToken, (req, res) => {
+  const { errors, isValid } = validateReportErrorInput(req.body);
+  if (!isValid) return res.status(401).json(errors);
+  ReportError.findOne({ rollnumber: req.student.userId })
+    .then(report => {
+      if (report)
+        return res.status(401).json({
+          notallowed:
+            "You Have Already Reported , We Will Verify And Update Soon"
+        });
+      const reportData = {};
+      reportData.rollnumber = req.student.userId;
+      reportData.error = req.body.error;
+      reportData.correct = req.body.correct;
+      new ReportError(reportData)
+        .save()
+        .then(response => res.json({ success: true }))
+        .catch(err => console.log(err));
+    })
+    .catch(err => console.log(err));
 });
 
 // @route POST api/student/protected

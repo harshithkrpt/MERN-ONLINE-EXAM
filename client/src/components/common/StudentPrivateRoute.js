@@ -11,7 +11,7 @@ const StudentPrivateRoute = ({ component: Component, auth, ...rest }) => {
         auth.isAuthenticated === true ? (
           <Component {...props} />
         ) : (
-          <Redirect to="/student/login" />
+          <Redirect to="/student_login" />
         )
       }
     />
