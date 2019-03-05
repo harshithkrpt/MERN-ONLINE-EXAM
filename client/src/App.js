@@ -1,14 +1,18 @@
 import React, { Component } from "react";
 import "./App.css";
 
-// checking if login
 import jwt_decode from "jwt-decode";
+// checking if admin login
 import setAuthToken from "./components/utils/setAuthToken";
 import { setCurrentAdmin, logoutadmin } from "./actions/authActions";
+// check if student login
+import setStudentToken from "./components/utils/setStudentToken";
+import { setCurrentStudent, logoutstudent } from "./actions/studentActions";
 
 // React Router Setup
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import PrivateRoute from "./components/common/PrivateRoute";
+import StudentPrivateRoute from "./components/common/StudentPrivateRoute";
 
 // Redux
 import { Provider } from "react-redux";
@@ -24,6 +28,8 @@ import RegisterSubjects from "./components/subjects/RegisterSubjects";
 import AddResults from "./components/student/inputs/AddResults";
 import AddStudentMarks from "./components/student/inputs/AddStudentMarks";
 import Dashboard from "./components/admin/Dashboard";
+import CreateOnlinePaper from "./components/onlineexam/CreateQuestionPaper";
+import StudentLogin from "./components/student/auth/StudentLogin";
 
 // Alerts
 import { Provider as AlertProvider } from "react-alert";
@@ -52,6 +58,25 @@ if (localStorage.jwtToken) {
   if (decoded.exp < currentTime) {
     // Logout User
     store.dispatch(logoutadmin());
+    window.location.href = "/student_login";
+  }
+}
+
+// Logic  check student
+if (localStorage.studentToken) {
+  // Set auth token to header of axios
+  setStudentToken(localStorage.studentToken);
+  // decode token header auth
+  const decoded = jwt_decode(localStorage.studentToken);
+
+  // set user to redux
+  store.dispatch(setCurrentStudent(decoded));
+
+  // Check for expired token
+  const currentTime = Date.now() / 1000;
+  if (decoded.exp < currentTime) {
+    // Logout User
+    store.dispatch(logoutstudent());
     window.location.href = "/admin-login";
   }
 }
@@ -71,6 +96,7 @@ class App extends Component {
               >
                 <Alert />
                 <Route exact path="/admin-login" component={AdminLogin} />
+                <Route exact path="/student_login" component={StudentLogin} />
                 <Switch>
                   <PrivateRoute
                     exact
@@ -108,6 +134,20 @@ class App extends Component {
                 </Switch>
                 <Switch>
                   <PrivateRoute exact path="/dashboard" component={Dashboard} />
+                </Switch>
+                <Switch>
+                  <PrivateRoute
+                    exact
+                    path="/create-online-paper"
+                    component={CreateOnlinePaper}
+                  />
+                </Switch>
+                <Switch>
+                  <StudentPrivateRoute
+                    exact
+                    path="/student/dashboard"
+                    component={CreateOnlinePaper}
+                  />
                 </Switch>
               </div>
             </React.Fragment>

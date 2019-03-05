@@ -126,22 +126,25 @@ router.post("/login", (req, res) => {
     }
 
     // Check Password
-    bcrypt.compare(password, student.password).then(isMatch => {
-      if (isMatch) {
-        const payload = {
-          userId: student.hallticketnumber,
-          name: student.name
-        };
-        // Create JWT
-        // Sign Token - User
-        jwt.sign(payload, key, { expiresIn: 3600 }, (err, token) => {
-          res.json({ success: true, token: "StudentBearer " + token });
-        });
-      } else {
-        errors.password = "Password Incorrect";
-        return res.status(400).json(errors);
-      }
-    });
+    bcrypt
+      .compare(password, student.password)
+      .then(isMatch => {
+        if (isMatch) {
+          const payload = {
+            userId: student.hallticketnumber,
+            name: student.name
+          };
+          // Create JWT
+          // Sign Token - User
+          jwt.sign(payload, key, { expiresIn: 3600 }, (err, token) => {
+            res.json({ success: true, token: "StudentBearer " + token });
+          });
+        } else {
+          errors.password = "Password Incorrect";
+          return res.status(400).json(errors);
+        }
+      })
+      .catch(err => console.log(err));
   });
 });
 

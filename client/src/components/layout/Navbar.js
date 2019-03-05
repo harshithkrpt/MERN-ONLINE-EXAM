@@ -2,21 +2,38 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { logoutadmin } from "../../actions/authActions";
+import { logoutstudent } from "../../actions/studentActions";
 import NavBar from "../styles/NavBar";
 import PropTypes from "prop-types";
+
+// TODO
 
 class Navbar extends Component {
   static propTypes = {
     auth: PropTypes.object.isRequired,
-    logoutadmin: PropTypes.func.isRequired
+    logoutadmin: PropTypes.func.isRequired,
+    studentauth: PropTypes.object.isRequired,
+    logoutstudent: PropTypes.func.isRequired
   };
 
   onLogoutClick = e => {
     e.preventDefault();
-    this.props.logoutadmin();
+    if (this.props.auth.isAuthenticated) {
+      this.props.logoutadmin();
+    }
+    if (this.props.studentauth.isAuthenticated) {
+      this.props.logoutstudent();
+    }
   };
   render() {
-    const { isAuthenticated } = this.props.auth;
+    let isAuthenticated = false;
+    if (this.props.auth.isAuthenticated) {
+      isAuthenticated = this.props.auth.isAuthenticated;
+    }
+    if (this.props.studentauth.isAuthenticated) {
+      isAuthenticated = this.props.studentauth.isAuthenticated;
+      console.log(isAuthenticated);
+    }
 
     const publicNav = (
       <ul>
@@ -67,10 +84,11 @@ class Navbar extends Component {
 }
 
 const mapStateToProps = state => ({
-  auth: state.auth
+  auth: state.auth,
+  studentauth: state.studentauth
 });
 
 export default connect(
   mapStateToProps,
-  { logoutadmin }
+  { logoutadmin, logoutstudent }
 )(Navbar);

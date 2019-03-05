@@ -29,7 +29,7 @@ class AddResults extends Component {
   onSubmit = e => {
     e.preventDefault();
     if (Object.keys(this.state.errors).length === 0) {
-      // Collecting Student Data
+      // Collecting Result Data
       let resultData = {};
       resultData.branch = this.state.branch;
       resultData.rollnumber = this.state.rollnumber;

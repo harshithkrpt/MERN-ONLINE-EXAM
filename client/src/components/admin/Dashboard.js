@@ -10,7 +10,7 @@ export class Dashboard extends Component {
         <h1>Dashboard</h1>
         <br />
         <br />
-        <Link to="/register-student">Register Srudent</Link> <br />
+        <Link to="/register-student">Register Student</Link> <br />
         <Link to="/register-subject">Register Subject</Link> <br />
         <Link to="/create-online-paper">Create Online Exam Paper</Link> <br />
         <Link to="/add-results">ADD RESULTS</Link> <br />
