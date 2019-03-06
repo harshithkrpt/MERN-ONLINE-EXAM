@@ -96,6 +96,14 @@ const StudentSchema = new Schema({
   studentmarks: {
     type: Schema.Types.ObjectId,
     ref: "studentmarks"
+  },
+  iswritingexam: {
+    type: Boolean,
+    default: false
+  },
+  year: {
+    type: String,
+    default: "1"
   }
 });
 

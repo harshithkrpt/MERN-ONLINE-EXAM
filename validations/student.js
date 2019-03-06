@@ -23,6 +23,7 @@ module.exports = function validatStudentDataInput(data) {
   data.mothername = !isEmpty(data.mothername) ? data.mothername : "";
   data.studentemail = !isEmpty(data.studentemail) ? data.studentemail : "";
   data.branch = !isEmpty(data.branch) ? data.branch : "";
+
   data.parentmobilenumber = !isEmpty(data.parentmobilenumber)
     ? data.parentmobilenumber
     : "";

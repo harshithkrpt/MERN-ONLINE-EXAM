@@ -2,13 +2,21 @@ const express = require("express"); // express import
 const passport = require("passport");
 // secret key
 const key = require("../../config/keys").facultySecretKey;
+
 // bcrypt
 const bcrypt = require("bcryptjs");
 // jwt
 const jwt = require("jsonwebtoken");
-
+//otplib
+const otplib = require("otplib");
 // Faculty Modal
 const Faculty = require("../../models/Faculty");
+// QuestionPaper Model
+const QuestionPaper = require("../../models/onlineexam/QuestionPaper");
+const Student = require("../../models/Student");
+
+// CreateExam
+const CreateExam = require("../../models/onlineexam/CreateExam");
 
 const router = express.Router();
 
@@ -100,7 +108,8 @@ router.post("/login", (req, res) => {
           const payload = {
             idcardnumber: faculty.idcardnumber,
             name: faculty.name,
-            branch: faculty.branch
+            branch: faculty.branch,
+            id: faculty._id
           };
 
           // Create JWT
@@ -117,9 +126,82 @@ router.post("/login", (req, res) => {
   });
 });
 
-// @route POST api/faculty/protected
-// @desc Student Protected Routes
-// @access Private for LoggedInStudents
+// @route POST api/faculty/createexam
+// @desc Create Exam
+// @access Private for LoggedInFaculty
+router.post("/createexam/:id", verifyToken, (req, res) => {
+  QuestionPaper.findById(req.params.id)
+    .then(questionpaper => {
+      if (!questionpaper) {
+        return res
+          .status(401)
+          .json({ questionpaper: "Question Paper Not Found" });
+      }
+      if (questionpaper.examconducted)
+        return res
+          .status(401)
+          .json({ onlineexam: "Exam is Already Conducted | Running" });
+      const length = questionpaper.questions.length;
+      // TODO UNCOMMENT
+      // if (length < 125) {
+      //   return res
+      //     .status(401)
+      //     .json({
+      //       onlineexam:
+      //         "Only " +
+      //         length +
+      //         " questions are in database need min 125 Questions"
+      //     });
+      // }
+      CreateExam.findOne({ examid: questionpaper._id }).then(createexam => {
+        if (createexam)
+          return res.status(401).json({ onlineexam: "Exam Already Created" });
+        // Creation of Create Exam Modal Data
+        const createExamData = {};
+        createExamData.questionpapers = [];
+        createExamData.answers = [];
+        for (let i = 0; i < 20; i++) {
+          createExamData.questionpapers[i] = [];
+          createExamData.answers[i] = [];
+          for (let j = 0; j < 20; j++) {
+            createExamData.questionpapers[i][j] = Math.floor(
+              Math.random() * length
+            );
+            createExamData.answers[i][j] =
+              questionpaper.questions[
+                createExamData.questionpapers[i][j]
+              ].answer;
+          }
+        }
+        // EXAM AND FACULTY ID
+        createExamData.facultyid = req.faculty.id;
+        createExamData.examid = questionpaper._id;
+        new CreateExam(createExamData)
+          .save()
+          .then(data => {
+            // Find All Students Marke Them to Write the Exam
+            // TODO ADD YEAR ALSO IN STUDENT MODEL
+            Student.update(
+              { branch: questionpaper.branch, year: questionpaper.year },
+              { iswritingexam: true },
+              { multi: true }
+            ).then(students => {
+              if (students.n === 0)
+                return res
+                  .status(404)
+                  .json({ onlineexam: "Students Not Found" });
+              return res.json({ otp: createOtp() });
+            });
+          })
+          .catch(err => console.log(err));
+      });
+    })
+    .catch(err => console.log(err));
+});
+
+// @route GET api/faculty/protected
+// @desc Faculty Protected
+// @access Private for LoggedInFaculty
 router.get("/protected", verifyToken, (req, res) => {
   return res.json({
     success: true,
@@ -129,5 +211,12 @@ router.get("/protected", verifyToken, (req, res) => {
     branch: req.faculty.branch
   });
 });
+
+// Create Otp Function
+const createOtp = () => {
+  const secret = require("../../config/keys").otpSecret;
+  const token = otplib.authenticator.generate(secret);
+  return token;
+};
 
 module.exports = router;
