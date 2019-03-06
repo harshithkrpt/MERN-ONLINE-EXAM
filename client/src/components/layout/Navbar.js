@@ -3,36 +3,46 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { logoutadmin } from "../../actions/authActions";
 import { logoutstudent } from "../../actions/studentActions";
+import { logoutonlinestudent } from "../../actions/onlineauthActions";
+import { logoutstaff } from "../../actions/staffAuthActions";
 import NavBar from "../styles/NavBar";
 import PropTypes from "prop-types";
-
-// TODO
 
 class Navbar extends Component {
   static propTypes = {
     auth: PropTypes.object.isRequired,
     logoutadmin: PropTypes.func.isRequired,
     studentauth: PropTypes.object.isRequired,
-    logoutstudent: PropTypes.func.isRequired
+    logoutstudent: PropTypes.func.isRequired,
+    logoutonlinestudent: PropTypes.func.isRequired,
+    onlineloginauth: PropTypes.object.isRequired,
+    logoutstaff: PropTypes.func.isRequired,
+    staffauth: PropTypes.object.isRequired
   };
 
   onLogoutClick = e => {
     e.preventDefault();
     if (this.props.auth.isAuthenticated) {
       this.props.logoutadmin();
-    }
-    if (this.props.studentauth.isAuthenticated) {
+    } else if (this.props.studentauth.isAuthenticated) {
       this.props.logoutstudent();
+    } else if (this.props.onlineloginauth.isAuthenticated) {
+      this.props.logoutonlinestudent();
+    } else if (this.props.staffauth.isAuthenticated) {
+      this.props.logoutstaff();
     }
   };
+
   render() {
     let isAuthenticated = false;
     if (this.props.auth.isAuthenticated) {
       isAuthenticated = this.props.auth.isAuthenticated;
-    }
-    if (this.props.studentauth.isAuthenticated) {
+    } else if (this.props.studentauth.isAuthenticated) {
       isAuthenticated = this.props.studentauth.isAuthenticated;
-      console.log(isAuthenticated);
+    } else if (this.props.onlineloginauth.isAuthenticated) {
+      isAuthenticated = this.props.onlineloginauth.isAuthenticated;
+    } else if (this.props.staffauth.isAuthenticated) {
+      isAuthenticated = this.props.staffauth.isAuthenticated;
     }
 
     const publicNav = (
@@ -48,6 +58,9 @@ class Navbar extends Component {
         </li>
         <li>
           <Link to="/admin-login">Admin Login</Link>
+        </li>
+        <li>
+          <Link to="/staff_login">Staff Login</Link>
         </li>
       </ul>
     );
@@ -85,10 +98,12 @@ class Navbar extends Component {
 
 const mapStateToProps = state => ({
   auth: state.auth,
-  studentauth: state.studentauth
+  studentauth: state.studentauth,
+  onlineloginauth: state.onlineloginauth,
+  staffauth: state.staffauth
 });
 
 export default connect(
   mapStateToProps,
-  { logoutadmin, logoutstudent }
+  { logoutadmin, logoutstudent, logoutonlinestudent, logoutstaff }
 )(Navbar);

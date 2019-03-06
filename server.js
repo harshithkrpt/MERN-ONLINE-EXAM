@@ -15,6 +15,8 @@ const result = require("./routes/api/result");
 const studentMarks = require("./routes/api/studentmarks");
 const onlinePaper = require("./routes/online-exam/online-paper");
 const onlineLogin = require("./routes/online-exam/online");
+const faculty = require("./routes/api/faculty");
+
 // initializing app
 const app = express();
 
@@ -47,7 +49,8 @@ app.use("/api/admin", admin);
 app.use("/api/subject", subject);
 app.use("/api/result", result);
 app.use("/api/studentmarks", studentMarks);
-app.use("/online-exam/", onlinePaper);
+app.use("/api/faculty", faculty);
+app.use("/online-exam", onlinePaper);
 app.use("/online", onlineLogin);
 
 app.listen(PORT, () => {

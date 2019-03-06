@@ -8,11 +8,22 @@ import { setCurrentAdmin, logoutadmin } from "./actions/authActions";
 // check if student login
 import setStudentToken from "./components/utils/setStudentToken";
 import { setCurrentStudent, logoutstudent } from "./actions/studentActions";
+// check if online login
+import setOnlineExamToken from "./components/utils/setOnlineToken";
+import {
+  setCurrentOnlineStudent,
+  logoutonlinestudent
+} from "./actions/onlineauthActions";
+// check if staff login
+import setStaffToken from "./components/utils/setStaffToken";
+import { setCurrentStaff, logoutstaff } from "./actions/staffAuthActions";
 
 // React Router Setup
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import PrivateRoute from "./components/common/PrivateRoute";
-import StudentPrivateRoute from "./components/common/StudentPrivateRoute";
+//import StudentPrivateRoute from "./components/common/StudentPrivateRoute";
+//import OnlineExamPrivateRoute from "./components/common/OnlineExamPrivateRoute";
+// import StaffPrivateRoute from "./components/common/StaffPrivateRoute";
 
 // Redux
 import { Provider } from "react-redux";
@@ -30,6 +41,8 @@ import AddStudentMarks from "./components/student/inputs/AddStudentMarks";
 import Dashboard from "./components/admin/Dashboard";
 import CreateOnlinePaper from "./components/onlineexam/CreateQuestionPaper";
 import StudentLogin from "./components/student/auth/StudentLogin";
+import OnlineExamLogin from "./components/onlineexam/auth/OnlineExamLogin";
+import StaffLogin from "./components/faculty/auth/StaffLogin";
 
 // Alerts
 import { Provider as AlertProvider } from "react-alert";
@@ -77,7 +90,45 @@ if (localStorage.studentToken) {
   if (decoded.exp < currentTime) {
     // Logout User
     store.dispatch(logoutstudent());
-    window.location.href = "/admin-login";
+    window.location.href = "/student_login";
+  }
+}
+
+// Logic  check online exam
+if (localStorage.onlineToken) {
+  // Set auth token to header of axios
+  setOnlineExamToken(localStorage.onlineToken);
+  // decode token header auth
+  const decoded = jwt_decode(localStorage.onlineToken);
+
+  // set user to redux
+  store.dispatch(setCurrentOnlineStudent(decoded));
+
+  // Check for expired token
+  const currentTime = Date.now() / 1000;
+  if (decoded.exp < currentTime) {
+    // Logout User
+    store.dispatch(logoutonlinestudent());
+    window.location.href = "/online_exam_login";
+  }
+}
+
+// Logic  check staff login
+if (localStorage.facultyToken) {
+  // Set auth token to header of axios
+  setStaffToken(localStorage.facultyToken);
+  // decode token header auth
+  const decoded = jwt_decode(localStorage.facultyToken);
+
+  // set user to redux
+  store.dispatch(setCurrentStaff(decoded));
+
+  // Check for expired token
+  const currentTime = Date.now() / 1000;
+  if (decoded.exp < currentTime) {
+    // Logout User
+    store.dispatch(logoutstaff());
+    window.location.href = "/staff_login";
   }
 }
 
@@ -97,6 +148,12 @@ class App extends Component {
                 <Alert />
                 <Route exact path="/admin-login" component={AdminLogin} />
                 <Route exact path="/student_login" component={StudentLogin} />
+                <Route exact path="/staff_login" component={StaffLogin} />
+                <Route
+                  exact
+                  path="/online_exam_login"
+                  component={OnlineExamLogin}
+                />
                 <Switch>
                   <PrivateRoute
                     exact

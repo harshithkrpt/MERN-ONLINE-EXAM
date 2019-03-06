@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
-const key = require("../config/keys").studentsecretKey;
-const Student = require("../models/Student");
+const key = require("../config/keys").facultySecretKey;
+const Faculty = require("../models/Faculty");
+
 module.exports = verifyToken;
 
 function verifyToken(req, res, next) {
@@ -13,10 +14,10 @@ function verifyToken(req, res, next) {
     jwt.verify(req.token, key, (err, authData) => {
       if (err) return res.status(403).json({ message: "Forbidden" });
 
-      Student.findOne({ hallticketnumber: authData.userId })
-        .then(student => {
-          if (!student) return res.status(403).json({ message: "Forbidden" });
-          req.student = authData;
+      Faculty.findOne({ idcardnumber: authData.idcardnumber })
+        .then(faculty => {
+          if (!faculty) return res.status(403).json({ message: "Forbidden" });
+          req.faculty = authData;
           next();
         })
         .catch(err => console.log(err));
