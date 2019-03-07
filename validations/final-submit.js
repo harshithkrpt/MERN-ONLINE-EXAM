@@ -21,7 +21,7 @@ module.exports = function validityFinalSubmit(data) {
     errors.examname = "Exam Name field is required";
   }
 
-  if (Validator.isEmpty(data.paperIndex)) {
+  if (data.paperIndex === "") {
     errors.paperIndex = "Paper Index is required";
   }
 

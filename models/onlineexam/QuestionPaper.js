@@ -22,6 +22,10 @@ const QuestionPaperSchema = new Schema({
     type: String,
     required: true
   },
+  mid: {
+    type: Number,
+    default: 1
+  },
   examconducted: {
     type: Boolean,
     default: false
