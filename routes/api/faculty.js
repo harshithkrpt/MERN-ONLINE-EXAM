@@ -7,8 +7,7 @@ const key = require("../../config/keys").facultySecretKey;
 const bcrypt = require("bcryptjs");
 // jwt
 const jwt = require("jsonwebtoken");
-//otplib
-const otplib = require("otplib");
+const createOtp = require("../../common/otp").createOtp;
 // Faculty Modal
 const Faculty = require("../../models/Faculty");
 // QuestionPaper Model
@@ -180,11 +179,9 @@ router.post("/createexam/:id", verifyToken, (req, res) => {
           .save()
           .then(data => {
             // Find All Students Marke Them to Write the Exam
-            // TODO ADD YEAR ALSO IN STUDENT MODEL
-            Student.update(
+            Student.updateMany(
               { branch: questionpaper.branch, year: questionpaper.year },
-              { iswritingexam: true },
-              { multi: true }
+              { iswritingexam: true, iscompletedexam: false }
             ).then(students => {
               if (students.n === 0)
                 return res
@@ -211,12 +208,5 @@ router.get("/protected", verifyToken, (req, res) => {
     branch: req.faculty.branch
   });
 });
-
-// Create Otp Function
-const createOtp = () => {
-  const secret = require("../../config/keys").otpSecret;
-  const token = otplib.authenticator.generate(secret);
-  return token;
-};
 
 module.exports = router;

@@ -18,6 +18,7 @@ class Alert extends Component {
       if (errors.allotedcredits) alert.error(errors.allotedcredits);
       if (errors.common) alert.error(errors.common);
       if (errors.studentprofileerror) alert.error(errors.studentprofileerror);
+      if (errors.notallowed) alert.error(errors.notallowed);
     }
   }
   render() {

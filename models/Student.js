@@ -101,6 +101,10 @@ const StudentSchema = new Schema({
     type: Boolean,
     default: false
   },
+  iscompletedexam: {
+    type: Boolean,
+    default: true
+  },
   year: {
     type: String,
     default: "1"

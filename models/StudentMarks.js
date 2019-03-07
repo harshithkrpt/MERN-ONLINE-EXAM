@@ -27,6 +27,10 @@ const StudentMarksSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "results"
   },
+  onlineresults: {
+    type: Schema.Types.ObjectId,
+    ref: "onlineresults"
+  },
   date: {
     type: Date,
     default: Date.now()
