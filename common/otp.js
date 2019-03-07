@@ -1,13 +1,10 @@
 //otplib
 const otplib = require("otplib");
-
-let otp = "";
-
+const CreateExam = require("../models/onlineexam/CreateExam");
 // Create Otp Function
 const createOtp = () => {
   const secret = otplib.authenticator.generateSecret();
-  otp = otplib.authenticator.generate(secret);
-  return otp;
+  return otplib.authenticator.generate(secret);
 };
 
 const checkOtp = stuotp => stuotp === otp;

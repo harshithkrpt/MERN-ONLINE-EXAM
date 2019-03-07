@@ -159,6 +159,8 @@ router.post("/createexam/:id", verifyToken, (req, res) => {
         const createExamData = {};
         createExamData.questionpapers = [];
         createExamData.answers = [];
+        createExamData.examname = questionpaper.subject;
+        createExamData.otp = createOtp();
         for (let i = 0; i < 20; i++) {
           createExamData.questionpapers[i] = [];
           createExamData.answers[i] = [];
@@ -175,6 +177,7 @@ router.post("/createexam/:id", verifyToken, (req, res) => {
         // EXAM AND FACULTY ID
         createExamData.facultyid = req.faculty.id;
         createExamData.examid = questionpaper._id;
+
         new CreateExam(createExamData)
           .save()
           .then(data => {
@@ -187,7 +190,7 @@ router.post("/createexam/:id", verifyToken, (req, res) => {
                 return res
                   .status(404)
                   .json({ onlineexam: "Students Not Found" });
-              return res.json({ otp: createOtp() });
+              return res.json({ otp: data.otp });
             });
           })
           .catch(err => console.log(err));

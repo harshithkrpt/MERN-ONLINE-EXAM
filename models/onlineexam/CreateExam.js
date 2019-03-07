@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 // create schema
-const AdminSchema = new Schema({
+const CreateExam = new Schema({
   questionpapers: [[{ type: Number, required: true }]],
   answers: [[{ type: String, required: true }]],
   date: {
@@ -16,7 +16,15 @@ const AdminSchema = new Schema({
   examid: {
     type: Schema.Types.ObjectId,
     required: true
+  },
+  examname: {
+    type: String,
+    required: true
+  },
+  otp: {
+    type: String,
+    required: true
   }
 });
 
-module.exports = Admin = mongoose.model("createexam", AdminSchema);
+module.exports = Admin = mongoose.model("createexam", CreateExam);
