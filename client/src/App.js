@@ -21,7 +21,7 @@ import { setCurrentStaff, logoutstaff } from "./actions/staffAuthActions";
 // React Router Setup
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import PrivateRoute from "./components/common/PrivateRoute";
-//import StudentPrivateRoute from "./components/common/StudentPrivateRoute";
+import StudentPrivateRoute from "./components/common/StudentPrivateRoute";
 //import OnlineExamPrivateRoute from "./components/common/OnlineExamPrivateRoute";
 // import StaffPrivateRoute from "./components/common/StaffPrivateRoute";
 
@@ -31,7 +31,6 @@ import store from "./store";
 
 // Component
 import Navbar from "./components/layout/Navbar";
-import ProgressBar from "./components/UI/ProgressBar";
 import AdminLogin from "./components/auth/AdminLogin";
 import AdminRegister from "./components/auth/AdminRegister";
 import RegisterStudent from "./components/student/inputs/RegisterStudent";
@@ -43,11 +42,13 @@ import CreateOnlinePaper from "./components/onlineexam/CreateQuestionPaper";
 import StudentLogin from "./components/student/auth/StudentLogin";
 import OnlineExamLogin from "./components/onlineexam/auth/OnlineExamLogin";
 import StaffLogin from "./components/faculty/auth/StaffLogin";
-
+import StudentDashboard from "./components/student/StudentDashboard";
+import StudentBasicInfo from "./components/student/StudentBasicInfo";
 // Alerts
 import { Provider as AlertProvider } from "react-alert";
 import AlertTemplate from "react-alert-template-basic";
 import Alert from "./components/layout/Alert";
+import SuccessAlert from "./components/layout/SuccessAlert";
 
 // Alert Options
 const alertOptions = {
@@ -140,12 +141,13 @@ class App extends Component {
           <Router>
             <React.Fragment>
               <Navbar />
-              <ProgressBar load={false} />
+
               <div
                 className="App"
                 style={{ position: "relative", top: "70px" }}
               >
                 <Alert />
+                <SuccessAlert />
                 <Route exact path="/admin-login" component={AdminLogin} />
                 <Route exact path="/student_login" component={StudentLogin} />
                 <Route exact path="/staff_login" component={StaffLogin} />
@@ -199,6 +201,20 @@ class App extends Component {
                     component={CreateOnlinePaper}
                   />
                 </Switch>
+                <Switch>
+                  <StudentPrivateRoute
+                    exact
+                    path="/student/dashboard"
+                    component={StudentDashboard}
+                  />
+                </Switch>
+                <Switch>
+                  <StudentPrivateRoute
+                    exact
+                    path="/student/basic_information"
+                    component={StudentBasicInfo}
+                  />
+                </Switch>
               </div>
             </React.Fragment>
           </Router>
@@ -207,4 +223,5 @@ class App extends Component {
     );
   }
 }
+
 export default App;

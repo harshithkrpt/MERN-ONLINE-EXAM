@@ -13,7 +13,7 @@ const jwt = require("jsonwebtoken");
 const Student = require("../../models/Student");
 const StudentMarks = require("../../models/StudentMarks");
 const ReportError = require("../../models/ReportError");
-
+const OnlineResults = require("../../models/onlineexam/OnlineResults");
 const router = express.Router();
 
 const validateStudentInput = require("../../validations/student");
@@ -192,7 +192,7 @@ router.post("/profile/report", verifyToken, (req, res) => {
   ReportError.findOne({ rollnumber: req.student.userId })
     .then(report => {
       if (report)
-        return res.status(401).json({
+        return res.status(403).json({
           notallowed:
             "You Have Already Reported , We Will Verify And Update Soon"
         });
@@ -202,10 +202,27 @@ router.post("/profile/report", verifyToken, (req, res) => {
       reportData.correct = req.body.correct;
       new ReportError(reportData)
         .save()
-        .then(response => res.json({ success: true }))
+        .then(response =>
+          res.json({
+            success: "We Have Received Your Request We Will Update Soon"
+          })
+        )
         .catch(err => console.log(err));
     })
     .catch(err => console.log(err));
+});
+
+// @route GET api/student/onlinemarks
+// @desc Student Getting Online Marks
+// @access Private for LoggedInStudents
+router.get("/onlinemarks", verifyToken, (req, res) => {
+  OnlineResults.findOne({ rollnumber: req.student.userId }).then(results => {
+    if (!results)
+      return res
+        .status(404)
+        .json({ notfound: "Your Online Results Are Not Found" });
+    return res.json(results);
+  });
 });
 
 // @route POST api/student/protected

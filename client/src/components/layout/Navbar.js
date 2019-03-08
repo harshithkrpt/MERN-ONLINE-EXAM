@@ -7,6 +7,7 @@ import { logoutonlinestudent } from "../../actions/onlineauthActions";
 import { logoutstaff } from "../../actions/staffAuthActions";
 import NavBar from "../styles/NavBar";
 import PropTypes from "prop-types";
+import ProgressBar from "../UI/ProgressBar";
 
 class Navbar extends Component {
   static propTypes = {
@@ -76,6 +77,7 @@ class Navbar extends Component {
     );
     return (
       <NavBar>
+        <ProgressBar load={this.props.isloading} />
         <header tabIndex="0">
           MREC EXAM CELL
           {isAuthenticated ? logedInNav : null}
@@ -100,7 +102,8 @@ const mapStateToProps = state => ({
   auth: state.auth,
   studentauth: state.studentauth,
   onlineloginauth: state.onlineloginauth,
-  staffauth: state.staffauth
+  staffauth: state.staffauth,
+  isloading: state.isloading
 });
 
 export default connect(

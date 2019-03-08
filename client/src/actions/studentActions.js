@@ -1,4 +1,10 @@
-import { GET_ERRORS, SET_CURRENT_STUDENT } from "./types";
+import {
+  GET_ERRORS,
+  SET_CURRENT_STUDENT,
+  SET_CURRENT_STUDENT_INFORMATION,
+  LOADING,
+  GET_SUCCESS
+} from "./types";
 import axios from "axios";
 
 import setStudentToken from "../components/utils/setStudentToken";
@@ -43,6 +49,7 @@ export const addstudentmarks = (studentMarksData, history) => dispatch => {
 
 // Login (GET STUDENT TOKEN)
 export const studentlogin = studentData => dispatch => {
+  dispatch({ type: LOADING, payload: true });
   axios
     .post("/api/student/login", studentData)
     .then(res => {
@@ -55,13 +62,15 @@ export const studentlogin = studentData => dispatch => {
       const decoded = jwt_decode(token);
       //Set Current Admin
       dispatch(setCurrentStudent(decoded));
+      dispatch({ type: LOADING, payload: false });
     })
-    .catch(err =>
+    .catch(err => {
       dispatch({
         type: GET_ERRORS,
         payload: err.response.data
-      })
-    );
+      });
+      dispatch({ type: LOADING, payload: false });
+    });
 };
 
 // Set Current Student
@@ -79,5 +88,39 @@ export const logoutstudent = () => dispatch => {
   // Remove auth header for future requests
   setStudentToken(false);
   // Set current user as false
+  dispatch({ type: SET_CURRENT_STUDENT_INFORMATION, payload: {} });
   dispatch(setCurrentStudent({}));
+};
+
+// GET BASIC  INFO
+export const loadstudentinfo = () => dispatch => {
+  dispatch({ type: LOADING, payload: true });
+  axios
+    .get("/api/student/profile")
+    .then(res => {
+      dispatch({
+        type: SET_CURRENT_STUDENT_INFORMATION,
+        payload: res.data
+      });
+      dispatch({ type: LOADING, payload: false });
+    })
+    .catch(err => {
+      dispatch({ type: GET_ERRORS, payload: err.response.data });
+      dispatch({ type: LOADING, payload: false });
+    });
+};
+
+//REPORT ERROR
+export const reporterror = reportData => dispatch => {
+  dispatch({ type: LOADING, payload: true });
+  axios
+    .post("/api/student/profile/report", reportData)
+    .then(res => {
+      dispatch({ type: GET_SUCCESS, payload: res.data });
+      dispatch({ type: LOADING, payload: false });
+    })
+    .catch(err => {
+      dispatch({ type: GET_ERRORS, payload: err.response.data });
+      dispatch({ type: LOADING, payload: false });
+    });
 };

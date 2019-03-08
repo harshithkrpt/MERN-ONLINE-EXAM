@@ -142,16 +142,14 @@ router.post("/createexam/:id", verifyToken, (req, res) => {
           .json({ onlineexam: "Exam is Already Conducted | Running" });
       const length = questionpaper.questions.length;
       // TODO UNCOMMENT
-      // if (length < 125) {
-      //   return res
-      //     .status(401)
-      //     .json({
-      //       onlineexam:
-      //         "Only " +
-      //         length +
-      //         " questions are in database need min 125 Questions"
-      //     });
-      // }
+      if (length < 125) {
+        return res.status(401).json({
+          onlineexam:
+            "Only " +
+            length +
+            " questions are in database need min 125 Questions"
+        });
+      }
       CreateExam.findOne({ examid: questionpaper._id }).then(createexam => {
         if (createexam)
           return res.status(401).json({ onlineexam: "Exam Already Created" });
@@ -195,6 +193,78 @@ router.post("/createexam/:id", verifyToken, (req, res) => {
           })
           .catch(err => console.log(err));
       });
+    })
+    .catch(err => console.log(err));
+});
+
+// @route POST api/faculty/student_exam_error
+// @desc Faculty Re Correcting Students to write Again
+// @access Private for LoggedInFaculty
+router.post("/student_exam_error", verifyToken, (req, res) => {
+  CreateExam.findOne({ facultyid: req.faculty.id }).then(exam => {
+    if (!exam)
+      return res.status(401).json({ notallowed: "You Cannot do this action" });
+    QuestionPaper.findById(exam.examid).then(paper => {
+      if (!paper)
+        return res.status(404).json({ notfound: "Question Paper Not Found" });
+      Student.findOne({ hallticketnumber: req.body.rollnumber }).then(
+        student => {
+          if (!student)
+            return res.status(404).json({ notfound: "Student Not Found" });
+          if (
+            student.branch !== questionpaper.branch ||
+            student.year !== questionpaper.year
+          )
+            return res.status(403).json({
+              notallowed:
+                "This Student Cannot Write this Exam Either Different Branch | Year"
+            });
+          Student.updateOne(
+            { hallticketnumber: req.body.rollnumber },
+            { iscompletedexam: false, iswritingexam: true }
+          )
+            .then(student => {
+              if (student) {
+                return res.json({ success: "Student Can Write Again " });
+              }
+              return res.json({ err: "Cannot Make Changes" });
+            })
+            .catch(err => console.log(err));
+        }
+      );
+    });
+  });
+});
+
+// @route DELETE api/faculty/completeexam
+// @desc Complete the Exam
+// @access Private for LoggedInFaculty
+router.delete("/completeexam/:id", verifyToken, (req, res) => {
+  const id = req.params.id;
+  QuestionPaper.updateOne({ _id: id }, { examconducted: true })
+    .then(questionpaper => {
+      //Check
+      CreateExam.findOneAndRemove({ examid: id, facultyid: req.faculty.id })
+        .then(exam => {
+          if (!exam)
+            return res.status(401).json({
+              notallowed:
+                "You Cannot Complete  the exam because you didnot create it"
+            });
+          Student.updateMany(
+            { branch: questionpaper.branch, year: questionpaper.year },
+            { iswritingexam: false, iscompletedexam: true }
+          ).then(student => {
+            if (student.n === 0) {
+              return res.json({
+                success: "EveryOne Wrote the Exam Successfully "
+              });
+            } else {
+              return res.json({ info: "Number of absenties are " + student.n });
+            }
+          });
+        })
+        .catch(err => console.log(err));
     })
     .catch(err => console.log(err));
 });
