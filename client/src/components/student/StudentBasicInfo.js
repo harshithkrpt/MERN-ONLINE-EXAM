@@ -16,7 +16,10 @@ class StudentBasicInfo extends Component {
     this.props.loadstudentinfo();
   }
   componentDidUpdate(prevProps) {
-    if (this.props.success !== prevProps.success) {
+    if (
+      this.props.success !== prevProps.success ||
+      this.props.errors.notallowed !== prevProps.errors.notallowed
+    ) {
       this.setState({ isVisible: !this.state.isVisible });
     }
   }
@@ -56,7 +59,8 @@ class StudentBasicInfo extends Component {
 
 const mapStateToProps = state => ({
   student: state.student,
-  success: state.success
+  success: state.success,
+  errors: state.errors
 });
 
 export default connect(

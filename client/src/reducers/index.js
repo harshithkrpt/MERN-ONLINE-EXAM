@@ -9,6 +9,10 @@ import staffAuthReducer from "./staffAuthReducer";
 import studentReducer from "./studentReducer";
 import progressReducer from "./progressReducer";
 import successReducer from "./successReducer";
+import studentMarksReducer from "./overAllMarksReducer";
+import onlineMarksReducer from "./onlineMarksReducer";
+import staffReducer from "./staffReducer";
+import onlineExamReducer from "./onlineExamReducer";
 
 export default combineReducers({
   auth: authReducer,
@@ -18,5 +22,9 @@ export default combineReducers({
   staffauth: staffAuthReducer,
   student: studentReducer,
   isloading: progressReducer,
-  success: successReducer
+  success: successReducer,
+  studentmarks: studentMarksReducer,
+  onlinemarks: onlineMarksReducer,
+  staff: staffReducer,
+  onlineexam: onlineExamReducer
 });

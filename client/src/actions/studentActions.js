@@ -3,7 +3,9 @@ import {
   SET_CURRENT_STUDENT,
   SET_CURRENT_STUDENT_INFORMATION,
   LOADING,
-  GET_SUCCESS
+  GET_SUCCESS,
+  GET_ONLINE_MARKS,
+  GET_OVERALL_MARKS
 } from "./types";
 import axios from "axios";
 
@@ -98,15 +100,15 @@ export const loadstudentinfo = () => dispatch => {
   axios
     .get("/api/student/profile")
     .then(res => {
+      dispatch({ type: LOADING, payload: false });
       dispatch({
         type: SET_CURRENT_STUDENT_INFORMATION,
         payload: res.data
       });
-      dispatch({ type: LOADING, payload: false });
     })
     .catch(err => {
-      dispatch({ type: GET_ERRORS, payload: err.response.data });
       dispatch({ type: LOADING, payload: false });
+      dispatch({ type: GET_ERRORS, payload: err.response.data });
     });
 };
 
@@ -116,11 +118,40 @@ export const reporterror = reportData => dispatch => {
   axios
     .post("/api/student/profile/report", reportData)
     .then(res => {
-      dispatch({ type: GET_SUCCESS, payload: res.data });
       dispatch({ type: LOADING, payload: false });
+      dispatch({ type: GET_SUCCESS, payload: res.data });
     })
     .catch(err => {
-      dispatch({ type: GET_ERRORS, payload: err.response.data });
       dispatch({ type: LOADING, payload: false });
+      dispatch({ type: GET_ERRORS, payload: err.response.data });
+    });
+};
+
+// GET MARKS online and OverAll Marks
+// GOOD ONE
+export const getoverallmarks = () => dispatch => {
+  dispatch({ type: LOADING, payload: true });
+  axios
+    .get("/api/student/marks")
+    .then(res => {
+      dispatch({ type: LOADING, payload: false });
+      dispatch({ type: GET_OVERALL_MARKS, payload: res.data });
+    })
+    .catch(err => {
+      dispatch({ type: LOADING, payload: false });
+      dispatch({ type: GET_ERRORS, payload: err.response.data });
+    });
+};
+
+export const getonlinemarks = () => dispatch => {
+  axios
+    .get("/api/student/onlinemarks")
+    .then(res => {
+      dispatch({ type: LOADING, payload: false });
+      dispatch({ type: GET_ONLINE_MARKS, payload: res.data });
+    })
+    .catch(err => {
+      dispatch({ type: LOADING, payload: false });
+      dispatch({ type: GET_ERRORS, payload: err.response.data });
     });
 };

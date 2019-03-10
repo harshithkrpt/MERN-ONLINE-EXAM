@@ -22,8 +22,8 @@ import { setCurrentStaff, logoutstaff } from "./actions/staffAuthActions";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import PrivateRoute from "./components/common/PrivateRoute";
 import StudentPrivateRoute from "./components/common/StudentPrivateRoute";
-//import OnlineExamPrivateRoute from "./components/common/OnlineExamPrivateRoute";
-// import StaffPrivateRoute from "./components/common/StaffPrivateRoute";
+import OnlineExamPrivateRoute from "./components/common/OnlineExamPrivateRoute";
+import StaffPrivateRoute from "./components/common/StaffPrivateRoute";
 
 // Redux
 import { Provider } from "react-redux";
@@ -44,11 +44,18 @@ import OnlineExamLogin from "./components/onlineexam/auth/OnlineExamLogin";
 import StaffLogin from "./components/faculty/auth/StaffLogin";
 import StudentDashboard from "./components/student/StudentDashboard";
 import StudentBasicInfo from "./components/student/StudentBasicInfo";
+import StaffDashboard from "./components/faculty/StaffDashboard";
+import ConductOnlineExam from "./components/faculty/ConductOnlineExam";
+import StaffProfile from "./components/faculty/StaffProfile";
+import ExamBegin from "./components/onlineexam/ExamBegin";
+import MainExam from "./components/onlineexam/MainExam";
+
 // Alerts
 import { Provider as AlertProvider } from "react-alert";
 import AlertTemplate from "react-alert-template-basic";
 import Alert from "./components/layout/Alert";
 import SuccessAlert from "./components/layout/SuccessAlert";
+import StudentMarks from "./components/student/StudentMarks";
 
 // Alert Options
 const alertOptions = {
@@ -213,6 +220,48 @@ class App extends Component {
                     exact
                     path="/student/basic_information"
                     component={StudentBasicInfo}
+                  />
+                </Switch>
+                <Switch>
+                  <StudentPrivateRoute
+                    exact
+                    path="/student/marks_details"
+                    component={StudentMarks}
+                  />
+                </Switch>
+                <Switch>
+                  <StaffPrivateRoute
+                    exact
+                    path="/staff/dashboard"
+                    component={StaffDashboard}
+                  />
+                </Switch>
+                <Switch>
+                  <StaffPrivateRoute
+                    exact
+                    path="/staff/conduct_online_exam"
+                    component={ConductOnlineExam}
+                  />
+                </Switch>
+                <Switch>
+                  <StaffPrivateRoute
+                    exact
+                    path="/staff/staff_profile"
+                    component={StaffProfile}
+                  />
+                </Switch>
+                <Switch>
+                  <OnlineExamPrivateRoute
+                    exact
+                    path="/online/begin"
+                    component={ExamBegin}
+                  />
+                </Switch>
+                <Switch>
+                  <OnlineExamPrivateRoute
+                    exact
+                    path="/online/exam"
+                    component={MainExam}
                   />
                 </Switch>
               </div>

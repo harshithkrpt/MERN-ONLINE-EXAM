@@ -22,7 +22,6 @@ const StaffSchema = new Schema({
     required: true
   },
   qualification: {
-    // joining batch years 2017-2018
     type: String,
     required: true
   },
@@ -31,7 +30,6 @@ const StaffSchema = new Schema({
     required: true
   },
   dob: {
-    // date of birth
     type: Date,
     required: true
   },

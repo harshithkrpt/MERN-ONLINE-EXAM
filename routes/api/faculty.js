@@ -125,6 +125,70 @@ router.post("/login", (req, res) => {
   });
 });
 
+// @route GET api/faculty/profile
+// @desc Faculty Profile
+// @access Private for LoggedInFaculty
+router.get("/profile", verifyToken, (req, res) => {
+  Faculty.findById(req.faculty.id)
+    .then(faculty => {
+      if (!faculty)
+        return res
+          .status(404)
+          .json({ notfound: "Faculty is Not Found Rare Error" });
+      const resData = {};
+      resData.date = faculty.date;
+      resData.id = faculty._id;
+      resData.name = faculty.name;
+      resData.email = faculty.email;
+      resData.idcardnumber = faculty.idcardnumber;
+      resData.hiringdate = faculty.hiringdate;
+      resData.qualification = faculty.qualification;
+      resData.branch = faculty.branch;
+      resData.dob = faculty.dob;
+      resData.mobilenumber = faculty.mobilenumber;
+      resData.sex = faculty.sex;
+      resData.salary = faculty.salary;
+      resData.pincode = faculty.address.pincode;
+      resData.state = faculty.address.state;
+      resData.city = faculty.address.city;
+      resData.locality = faculty.address.locality;
+      return res.json(resData);
+    })
+    .catch(err => console.log(err));
+});
+
+// @route POST api/faculty/questionpapers
+// @desc Get The Online Question Papers
+// @access Private for LoggedInFaculty
+router.post("/questionpapers", verifyToken, (req, res) => {
+  if (!req.body.branch)
+    return res.status(404).json({ branch: "Please Select a valid Branch" });
+  QuestionPaper.find({ branch: req.body.branch })
+    .then(questionpapers => {
+      if (questionpapers.length === 0)
+        return res.status(404).json({
+          notfound: `No Question Paper is Created as of now for ${
+            req.body.branch
+          }`
+        });
+      let resData = [];
+      questionpapers.forEach((questionpaper, i) => {
+        resData[i] = {
+          branch: questionpaper.branch,
+          id: questionpaper._id,
+          date: questionpaper.date,
+          year: questionpaper.year,
+          semister: questionpaper.semister,
+          subject: questionpaper.subject,
+          mid: questionpaper.mid,
+          examconducted: questionpaper.examconducted
+        };
+      });
+      return res.json({ questionpapers: resData });
+    })
+    .catch(err => console.log(err));
+});
+
 // @route POST api/faculty/createexam
 // @desc Create Exam
 // @access Private for LoggedInFaculty
@@ -142,14 +206,14 @@ router.post("/createexam/:id", verifyToken, (req, res) => {
           .json({ onlineexam: "Exam is Already Conducted | Running" });
       const length = questionpaper.questions.length;
       // TODO UNCOMMENT
-      if (length < 125) {
-        return res.status(401).json({
-          onlineexam:
-            "Only " +
-            length +
-            " questions are in database need min 125 Questions"
-        });
-      }
+      // if (length < 125) {
+      //   return res.status(401).json({
+      //     onlineexam:
+      //       "Only " +
+      //       length +
+      //       " questions are in database need min 125 Questions"
+      //   });
+      // }
       CreateExam.findOne({ examid: questionpaper._id }).then(createexam => {
         if (createexam)
           return res.status(401).json({ onlineexam: "Exam Already Created" });
@@ -197,6 +261,34 @@ router.post("/createexam/:id", verifyToken, (req, res) => {
     .catch(err => console.log(err));
 });
 
+// @route GET api/faculty/currentexams
+// @desc Currently Running Exams
+// @access Private for LoggedInFaculty
+router.get("/currentexams", verifyToken, (req, res) => {
+  CreateExam.find()
+    .populate("examid")
+    .then(exams => {
+      if (exams.length === 0)
+        return res
+          .status("404")
+          .json({ onlineexam: "No Exam is Conducted Now" });
+      let resData = [];
+      exams.forEach((exam, index) => {
+        resData[index] = {};
+        resData[index].id = exam._id;
+        resData[index].examname = exam.examname;
+        resData[index].otp = exam.otp;
+        resData[index].facultyid = exam.facultyid;
+        resData[index].branch = exam.examid.branch;
+        resData[index].mid = exam.examid.mid;
+        resData[index].year = exam.examid.year;
+        resData[index].semister = exam.examid.semister;
+        resData[index].examid = exam.examid._id;
+      });
+      return res.json(resData);
+    });
+});
+
 // @route POST api/faculty/student_exam_error
 // @desc Faculty Re Correcting Students to write Again
 // @access Private for LoggedInFaculty
@@ -240,7 +332,14 @@ router.post("/student_exam_error", verifyToken, (req, res) => {
 // @desc Complete the Exam
 // @access Private for LoggedInFaculty
 router.delete("/completeexam/:id", verifyToken, (req, res) => {
+  if (!req.body.branch && !req.body.year)
+    return res
+      .status(403)
+      .json({ notallowed: "Branch and year field is required" });
   const id = req.params.id;
+  const branch = req.body.branch;
+  const year = req.body.year;
+
   QuestionPaper.updateOne({ _id: id }, { examconducted: true })
     .then(questionpaper => {
       //Check
@@ -248,11 +347,15 @@ router.delete("/completeexam/:id", verifyToken, (req, res) => {
         .then(exam => {
           if (!exam)
             return res.status(401).json({
-              notallowed:
-                "You Cannot Complete  the exam because you didnot create it"
+              notallowed: "Exam Already Completed"
             });
           Student.updateMany(
-            { branch: questionpaper.branch, year: questionpaper.year },
+            {
+              branch: branch,
+              year: year,
+              iswritingexam: true,
+              iscompletedexam: false
+            },
             { iswritingexam: false, iscompletedexam: true }
           ).then(student => {
             if (student.n === 0) {
@@ -260,7 +363,9 @@ router.delete("/completeexam/:id", verifyToken, (req, res) => {
                 success: "EveryOne Wrote the Exam Successfully "
               });
             } else {
-              return res.json({ info: "Number of absenties are " + student.n });
+              return res.json({
+                success: "Number of absenties are " + student.n
+              });
             }
           });
         })

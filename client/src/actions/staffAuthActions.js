@@ -3,6 +3,7 @@ import axios from "axios";
 
 import setStaffToken from "../components/utils/setStaffToken";
 import jwt_decode from "jwt-decode";
+import { clearstaff } from "./staffActions";
 
 // Login (GET STUDENT TOKEN)
 export const stafflogin = staffData => dispatch => {
@@ -43,4 +44,5 @@ export const logoutstaff = () => dispatch => {
   setStaffToken(false);
   // Set current user as false
   dispatch(setCurrentStaff({}));
+  dispatch(clearstaff());
 };

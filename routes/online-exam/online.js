@@ -71,13 +71,9 @@ router.post("/writeexam", verifyToken, (req, res) => {
 
   CreateExam.findOne({ otp: req.body.otp })
     .then(exam => {
+      if (!exam) return res.status(401).json({ online: "Invalid Otp" });
       if (exam.otp !== req.body.otp)
         return res.status(401).json({ otp: "Invalid Otp" });
-      if (!exam)
-        return res
-          .status(401)
-          .json({ online: "You Cannot Write the exam now" });
-
       //Get Question Papers
       QuestionPaper.findOne({
         branch: req.student.branch,

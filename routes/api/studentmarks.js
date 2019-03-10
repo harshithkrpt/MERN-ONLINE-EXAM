@@ -5,7 +5,7 @@ const passport = require("passport");
 const StudentMarks = require("../../models/StudentMarks");
 const Subject = require("../../models/Subject");
 const Result = require("../../models/Result");
-
+const Student = require("../../models/Student");
 //verify token
 const verifyToken = require("../../middleware/studentlogin");
 
@@ -77,10 +77,20 @@ route.post(
 
                       .catch(err => console.log(err));
                   } else {
+                    // Update Stdent
                     new StudentMarks(studentMarksData)
                       .save()
                       .then(stdmarks => {
-                        return res.json(stdmarks);
+                        Student.updateOne(
+                          { hallticketnumber: rollnumber },
+                          { studentmarks: stdmarks._id }
+                        ).then(student => {
+                          if (student.n == 0)
+                            return res
+                              .status(500)
+                              .json({ ine: "Internal Server Error" });
+                          return res.json(stdmarks);
+                        });
                       })
                       .catch(err =>
                         console.log(

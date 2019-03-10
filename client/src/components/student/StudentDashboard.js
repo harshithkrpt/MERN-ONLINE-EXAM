@@ -16,11 +16,10 @@ export class StudentDashboard extends Component {
         <br />
         <br />
         <Link to="/student/basic_information">Basic Information</Link> <br />
-        <Link to="/student/academic_information">
-          Academic Information
-        </Link>{" "}
+        <Link to="/student/academic_information">Academic Information</Link>
         <br />
         <Link to="/student/exam_time_table">Exam Time Table</Link> <br />
+        <Link to="/student/online_payments">Online Payments</Link> <br />
         <Link to="/student/marks_details">Marks Details</Link> <br />
         <Link to="/student/contact_us">Contact Us</Link> <br />
       </StudentDashboardStyle>

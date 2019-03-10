@@ -212,6 +212,30 @@ router.post("/profile/report", verifyToken, (req, res) => {
     .catch(err => console.log(err));
 });
 
+// @route GET api/student/marks
+// @desc Student Protected Routes
+// @access Private for LoggedInStudents
+router.get("/marks", verifyToken, (req, res) => {
+  Student.findOne({ hallticketnumber: req.student.userId })
+    .then(student => {
+      if (!student)
+        return res
+          .status(404)
+          .json({ notfound: req.student.userId + " Not Found" });
+      if (!student.studentmarks)
+        return res
+          .status(404)
+          .json({ notfound: req.student.userId + " results are not uploaded" });
+      StudentMarks.findById(student.studentmarks)
+        .populate("branchsubjects")
+        .populate("semresults")
+        .then(studentMarks => {
+          res.json(studentMarks);
+        });
+    })
+    .catch(err => console.log(err));
+});
+
 // @route GET api/student/onlinemarks
 // @desc Student Getting Online Marks
 // @access Private for LoggedInStudents
@@ -225,7 +249,7 @@ router.get("/onlinemarks", verifyToken, (req, res) => {
   });
 });
 
-// @route POST api/student/protected
+// @route GET api/student/protected
 // @desc Student Protected Routes
 // @access Private for LoggedInStudents
 router.get("/protected", verifyToken, (req, res) => {

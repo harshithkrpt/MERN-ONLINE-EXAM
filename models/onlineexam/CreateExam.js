@@ -15,7 +15,8 @@ const CreateExam = new Schema({
   },
   examid: {
     type: Schema.Types.ObjectId,
-    required: true
+    required: true,
+    ref: "questionpapers"
   },
   examname: {
     type: String,
