@@ -52,6 +52,7 @@ class StudentLogin extends Component {
       <LoginStyle>
         <h1>Student Login</h1>
         <p>Sign In to your MRECEXAMCELL Student Account</p>
+        <div className="margin" />
         <form onSubmit={this.onSubmit}>
           <TextFieldGroup
             placeholder="User Id"

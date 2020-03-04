@@ -1,0 +1,8 @@
+Admin Login and Registration Completed
+Route For Creating and Updating Student is completed
+Data Model for Student Marks is Completed Enter and Updating Student Details Completed
+Data Model for Subjects is Completed Entering and Updating Student Details Completed
+Data Model for results is Completed Entering and Updating Results Details Completed
+Data Model for Student Marks is Completed and Connecting the subjects , results also but todo
+	Calculating the CGPA and Counting the credits , Sgpa is Completed
+Connecting Student with Student Marks is Completed.

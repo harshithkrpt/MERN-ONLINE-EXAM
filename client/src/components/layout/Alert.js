@@ -21,6 +21,7 @@ class Alert extends Component {
       if (errors.notallowed) alert.error(errors.notallowed);
       if (errors.notfound) alert.error(errors.notfound);
       if (errors.onlineexam) alert.error(errors.onlineexam);
+      if (errors.userId) alert.error(errors.userId);
     }
   }
   render() {

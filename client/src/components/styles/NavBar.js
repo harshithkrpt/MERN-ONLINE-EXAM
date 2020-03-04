@@ -49,6 +49,15 @@ export default styled.div`
     visibility: visible;
   }
 
+  .logout-button {
+    position: absolute;
+    right: 20px;
+    background: var(--colorPrimary400);
+    border-radius: 0.3rem;
+    padding: 5px;
+    color: #fff;
+  }
+
   .button {
     position: relative;
     display: flex;

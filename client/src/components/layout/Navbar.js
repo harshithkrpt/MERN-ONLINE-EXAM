@@ -67,13 +67,9 @@ class Navbar extends Component {
     );
 
     const logedInNav = (
-      <ul>
-        <li>
-          <a href="/" onClick={this.onLogoutClick}>
-            Logout
-          </a>
-        </li>
-      </ul>
+      <a href="/" className="logout-button" onClick={this.onLogoutClick}>
+        Logout
+      </a>
     );
     return (
       <NavBar>

@@ -10,11 +10,11 @@ module.exports = function validateFacultyLoginInput(data) {
   data.password = !isEmpty(data.password) ? data.password : "";
 
   if (!Validator.isLength(data.idcardnumber, { min: 10, max: 10 })) {
-    errors.idcardnumber = "idcardnumber must be between 10 characters";
+    errors.userId = "Faculty Id must be between 10 characters";
   }
 
   if (Validator.isEmpty(data.idcardnumber))
-    errors.idcardnumber = "Id Card Number Field is Required";
+    errors.userId = "Faculty Id Field is Required";
 
   if (!Validator.isLength(data.password, { min: 6, max: 30 })) {
     errors.password = "Password must be between 6-30 characters";

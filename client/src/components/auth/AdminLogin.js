@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { loginadmin } from "../../actions/authActions";
-import styled from "styled-components";
+import LoginStyle from "../styles/students/LoginStyle";
 import TextFieldGroup from "../common/TextFieldGroup";
 
 class AdminLogin extends Component {
@@ -52,6 +52,7 @@ class AdminLogin extends Component {
       <LoginStyle>
         <h1>Login Admin</h1>
         <p>Sign In to your MRECEXAMCELL Admin Account</p>
+        <div className="margin" />
         <form onSubmit={this.onSubmit}>
           <TextFieldGroup
             placeholder="Email Address"
@@ -84,8 +85,3 @@ export default connect(
   mapStateToProps,
   { loginadmin }
 )(AdminLogin);
-
-const LoginStyle = styled.div`
-  position: fixed;
-  top: 50%;
-`;

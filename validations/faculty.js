@@ -44,11 +44,11 @@ module.exports = function validateFacultyInput(data) {
   }
 
   if (!Validator.isLength(data.idcardnumber, { min: 10, max: 10 })) {
-    errors.idcardnumber = "IdCardNumber must be between 10 characters";
+    errors.userid = "Faculty Id must be between 10 characters";
   }
 
   if (Validator.isEmpty(data.idcardnumber)) {
-    errors.idcardnumber = "IDCardNumber field is required";
+    errors.userid = "Faculty Id field is required";
   }
 
   if (!isDate(data.hiringdate)) {

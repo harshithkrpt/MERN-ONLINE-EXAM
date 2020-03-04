@@ -49,6 +49,7 @@ import ConductOnlineExam from "./components/faculty/ConductOnlineExam";
 import StaffProfile from "./components/faculty/StaffProfile";
 import ExamBegin from "./components/onlineexam/ExamBegin";
 import MainExam from "./components/onlineexam/MainExam";
+import OnlineExamResult from "./components/onlineexam/OnlineExamResult";
 
 // Alerts
 import { Provider as AlertProvider } from "react-alert";
@@ -262,6 +263,13 @@ class App extends Component {
                     exact
                     path="/online/exam"
                     component={MainExam}
+                  />
+                </Switch>
+                <Switch>
+                  <OnlineExamPrivateRoute
+                    exact
+                    path="/online/result"
+                    component={OnlineExamResult}
                   />
                 </Switch>
               </div>

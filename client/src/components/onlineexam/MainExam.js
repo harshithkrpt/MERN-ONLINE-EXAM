@@ -22,7 +22,7 @@ export class MainExam extends Component {
 
   onChange = (index, e) => {
     const studentOptions = [...this.state.studentoptions];
-    studentOptions[index] = e.toString();
+    studentOptions[index] = (parseInt(e) + 1).toString();
     this.setState({ studentoptions: [...studentOptions] });
   };
 
